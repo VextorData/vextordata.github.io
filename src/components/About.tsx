@@ -19,36 +19,26 @@ const MotionBox = motion.create(Box);
 
 
 const capabilities = [
-
   {
-    title:"Software Engineering",
-
+    title: "Custom Software",
     description:
-      "Designing scalable software solutions adapted to real business needs.",
-
-    icon:<CodeRounded />,
+      "Tailor-made applications and platforms designed around your business, your processes and your goals.",
+    icon: <CodeRounded />,
   },
 
-
   {
-    title:"Data & Automation",
-
+    title: "Automation & Integration",
     description:
-      "Transforming complex data processes into efficient automated workflows.",
-
-    icon:<DataObjectRounded />,
+      "Automate repetitive tasks, connect your systems and streamline workflows with reliable, scalable solutions.",
+    icon: <DataObjectRounded />,
   },
 
-
   {
-    title:"Digital Transformation",
-
+    title: "Regulatory Technology",
     description:
-      "Helping organizations modernize their operations through technology.",
-
-    icon:<AutoModeRounded />,
+      "Specialized software and SaaS solutions built on extensive experience in Regulatory Affairs and highly regulated industries.",
+    icon: <AutoModeRounded />,
   },
-
 ];
 
 
@@ -183,8 +173,7 @@ const About = () => {
           >
 
 
-            Building technology
-            that simplifies complexity.
+            Technology built for real business challenges.
 
 
 
@@ -225,9 +214,7 @@ const About = () => {
           >
 
 
-            VextorData is a software engineering
-            company focused on data, automation
-            and intelligent systems.
+            VextorData is a software engineering company specialized in custom software, business automation and SaaS solutions. We work with organizations of all sizes to simplify operations, eliminate repetitive tasks and build technology that delivers measurable results.
 
 
 
@@ -236,11 +223,7 @@ const About = () => {
 
 
 
-            We help organizations digitize their
-            processes, optimize workflows and
-            transform complex information into
-            practical solutions that improve
-            everyday operations.
+            Alongside our software development expertise, we bring extensive experience in Regulatory Affairs and the European regulatory ecosystem. Working with highly regulated environments has given us a deep understanding of how digitalization is reshaping industries and the growing need for businesses to modernize their processes through technology. This unique perspective allows us to develop practical solutions for both highly regulated organizations and companies looking to streamline their everyday operations.
 
 
 

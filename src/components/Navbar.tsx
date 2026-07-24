@@ -66,7 +66,7 @@ const Navbar = () => {
 
   const menuItems = [
 
-    "Projects",
+    "Products",
 
     "Technology",
 
@@ -110,7 +110,7 @@ const Navbar = () => {
     const sections: Record<string,string> = {
 
 
-      Projects:"projects",
+      Products:"products",
 
       Technology:"technology",
 
@@ -301,28 +301,21 @@ const Navbar = () => {
 
 
               sx={{
+  width: {
+    xs: 72,
+    md: 84,
+  },
 
+  height: {
+    xs: 72,
+    md: 84,
+  },
 
+  objectFit: "contain",
 
-                width:65,
-
-
-
-                height:65,
-
-
-
-                objectFit:"contain",
-
-
-
-                filter:
-
-                "drop-shadow(0 8px 18px rgba(37,99,235,.35))",
-
-
-
-              }}
+  filter:
+    "drop-shadow(0 10px 22px rgba(37,99,235,.35))",
+}}
 
 
 

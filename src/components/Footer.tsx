@@ -121,7 +121,8 @@ const Footer = () => {
 
             >
 
-              Building Intelligent Software
+              Engineering
+Business Solutions
 
             </Typography>
 
