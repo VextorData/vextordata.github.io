@@ -16,12 +16,19 @@ const MotionBox = motion.create(Box);
 const Hero = () => {
   const handleProjectsClick = () => {
     document
-      .getElementById("projects")
+      .getElementById("products")
       ?.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
   };
+
+  const handleContactClick = () => {
+  document.getElementById("contact")?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+};
 
   return (
     <Box
@@ -183,19 +190,17 @@ const Hero = () => {
                     transition: "all .25s ease",
                   }}
                 >
-                  Explore Services
+                  Explore our solutions
                 </Button>
 
-                <Button
-                  variant="outlined"
-                  size="large"
-                  sx={{
-                    px: 4,
-                    borderRadius: "999px",
-                  }}
-                >
-                  Contact Us
-                </Button>
+  
+
+<Button
+  variant="outlined"
+  onClick={handleContactClick}
+>
+  Contact Us
+</Button>
               </Stack>
             </Stack>
           </MotionBox>
