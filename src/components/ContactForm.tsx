@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   Box,
@@ -27,22 +27,6 @@ const ContactForm = ({ t }: ContactFormProps) => {
     email: "",
     message: "",
   });
-
-  // Detectar si FormSubmit ha enviado correctamente el formulario
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    if (params.get("contact") === "success") {
-      setSuccess(true);
-
-      // Limpiar ?contact=success de la URL
-      window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname
-      );
-    }
-  }, []);
 
   const inputStyles = {
     mb: 2,
@@ -113,28 +97,58 @@ const ContactForm = ({ t }: ContactFormProps) => {
     });
   };
 
-  const handleSubmit = (
+  const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
+    e.preventDefault();
+
     if (
       !form.name.trim() ||
       !form.email.trim() ||
       !form.message.trim()
     ) {
-      e.preventDefault();
       setError(true);
       return;
     }
 
     setLoading(true);
+    setError(false);
+
+    try {
+      const response = await fetch(
+        "https://vextordata-contact-api.vercel.app/api/contact",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      setSuccess(true);
+
+      setForm({
+        name: "",
+        email: "",
+        message: "",
+      });
+    } catch (err) {
+      console.error("Contact form error:", err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
       <Box
         component="form"
-        action="https://formsubmit.co/team@vextordata.com"
-        method="POST"
         onSubmit={handleSubmit}
         sx={{
           background: "rgba(15,23,42,.55)",
@@ -148,44 +162,6 @@ const ContactForm = ({ t }: ContactFormProps) => {
           mx: "auto",
         }}
       >
-        {/* FormSubmit configuration */}
-
-        <input
-          type="hidden"
-          name="_template"
-          value="table"
-        />
-
-        <input
-          type="hidden"
-          name="_autoresponse"
-          value={`Thank you for contacting VextorData.
-
-We have received your message and appreciate you reaching out to us.
-
-Our team will review your request and get back to you as soon as possible.
-
-Best regards,
-VextorData Team
-
-------------------------------
-
-Gracias por contactar con VextorData.
-
-Hemos recibido tu mensaje y agradecemos que te hayas puesto en contacto con nosotros.
-
-Nuestro equipo revisará tu solicitud y te responderá lo antes posible.
-
-Un saludo,
-Equipo VextorData`}
-        />
-
-        <input
-          type="hidden"
-          name="_next"
-          value="https://vextordata.com/?contact=success"
-        />
-
         <TextField
           fullWidth
           required
