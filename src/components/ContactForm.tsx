@@ -19,6 +19,7 @@ interface ContactFormProps {
 
 const ContactForm = ({ t }: ContactFormProps) => {
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
 
   const [form, setForm] = useState({
@@ -135,40 +136,40 @@ const ContactForm = ({ t }: ContactFormProps) => {
 
         <input
           type="hidden"
-          name="_subject"
-          value="New contact from VextorData"
+          name="_template"
+          value="table"
         />
 
-        <input
-          type="hidden"
-          name="_autoresponse"
-          value={`Thank you for contacting VextorData.
+       <input
+        type="hidden"
+        name="_autoresponse"
+        value={`Thank you for contacting VextorData.
         
-        We have received your message and appreciate you reaching out to us.
-        
-        Our team will review your request and get back to you as soon as possible.
-        
-        Best regards,
-        VextorData Team
-        
-        ────────────────────────
-        
-        Gracias por contactar con VextorData.
-        
-        Hemos recibido tu mensaje y agradecemos que te hayas puesto en contacto con nosotros.
-        
-        Nuestro equipo revisará tu solicitud y te responderá lo antes posible.
-        
-        Un saludo,
-        Equipo VextorData`}
+          We have received your message and appreciate you reaching out to us.
+          
+          Our team will review your request and get back to you as soon as possible.
+          
+          Best regards,
+          VextorData Team
+          
+          ------------------------------
+          
+          Gracias por contactar con VextorData.
+          
+          Hemos recibido tu mensaje y agradecemos que te hayas puesto en contacto con nosotros.
+          
+          Nuestro equipo revisará tu solicitud y te responderá lo antes posible.
+          
+          Un saludo,
+          Equipo VextorData`}
         />
 
         <input
           type="hidden"
           name="_next"
-          value="https://vextordata.com/contact?sent=true"
+          value="https://vextordata.com/?contact=success"
         />
-
+        
         <TextField
           fullWidth
           required
