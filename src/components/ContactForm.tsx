@@ -23,9 +23,9 @@ const ContactForm = ({ t }: ContactFormProps) => {
   const [error, setError] = useState(false);
 
   const [form, setForm] = useState({
-    Name: "",
-    Email: "",
-    Message: "",
+    name: "",
+    email: "",
+    message: "",
   });
 
   const inputStyles = {
@@ -91,7 +91,11 @@ const ContactForm = ({ t }: ContactFormProps) => {
   ) => {
     e.preventDefault();
 
-    if (!form.Name.trim() || !form.Email.trim() || !form.Message.trim()) {
+    if (
+      !form.name.trim() ||
+      !form.email.trim() ||
+      !form.message.trim()
+    ) {
       setError(true);
       return;
     }
@@ -99,34 +103,55 @@ const ContactForm = ({ t }: ContactFormProps) => {
     setLoading(true);
 
     try {
+      const formData = new FormData();
+
+      formData.append("name", form.name);
+      formData.append("email", form.email);
+      formData.append("message", form.message);
+
+      formData.append(
+        "_subject",
+        "New contact from VextorData"
+      );
+
+      formData.append(
+        "_autoresponse",
+        `Thank you for contacting VextorData.
+
+We have received your message and appreciate you reaching out to us.
+
+Our team will review your request and get back to you as soon as possible.
+
+Best regards,
+VextorData`
+      );
+
+      formData.append("_captcha", "false");
+
       const response = await fetch(
         "https://formsubmit.co/ajax/team@vextordata.com",
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Accept: "application/json",
           },
-          body: JSON.stringify({
-            _subject: "New contact from VextorData",
-            Name: form.Name,
-            Email: form.Email,
-            Message: form.Message,
-          }),
+          body: formData,
         }
       );
 
       if (!response.ok) {
-        throw new Error();
+        throw new Error("Failed to send message");
       }
 
       setSuccess(true);
+
       setForm({
-        Name: "",
-        Email: "",
-        Message: "",
+        name: "",
+        email: "",
+        message: "",
       });
-    } catch {
+    } catch (error) {
+      console.error(error);
       setError(true);
     } finally {
       setLoading(false);
@@ -153,9 +178,9 @@ const ContactForm = ({ t }: ContactFormProps) => {
         <TextField
           fullWidth
           required
-          name="Name"
+          name="name"
           label={t.form.name}
-          value={form.Name}
+          value={form.name}
           onChange={handleChange}
           variant="outlined"
           sx={inputStyles}
@@ -164,10 +189,10 @@ const ContactForm = ({ t }: ContactFormProps) => {
         <TextField
           fullWidth
           required
-          name="Email"
+          name="email"
           type="email"
           label={t.form.email}
-          value={form.Email}
+          value={form.email}
           onChange={handleChange}
           variant="outlined"
           sx={inputStyles}
@@ -176,11 +201,11 @@ const ContactForm = ({ t }: ContactFormProps) => {
         <TextField
           fullWidth
           required
-          name="Message"
+          name="message"
           label={t.form.message}
           multiline
           rows={5}
-          value={form.Message}
+          value={form.message}
           onChange={handleChange}
           variant="outlined"
           sx={inputStyles}
@@ -196,17 +221,27 @@ const ContactForm = ({ t }: ContactFormProps) => {
             borderRadius: "999px",
             py: 1.5,
             mt: 1,
-            background: "linear-gradient(135deg,#2563EB,#06B6D4)",
+            background:
+              "linear-gradient(135deg,#2563EB,#06B6D4)",
             fontWeight: 700,
-            boxShadow: "0 10px 30px rgba(37,99,235,.35)",
+            boxShadow:
+              "0 10px 30px rgba(37,99,235,.35)",
             "&:hover": {
               transform: "translateY(-2px)",
-              boxShadow: "0 15px 40px rgba(37,99,235,.45)",
+              boxShadow:
+                "0 15px 40px rgba(37,99,235,.45)",
             },
             transition: "all .25s ease",
           }}
         >
-          {loading ? <CircularProgress size={24} sx={{ color: "white" }} /> : t.form.send}
+          {loading ? (
+            <CircularProgress
+              size={24}
+              sx={{ color: "white" }}
+            />
+          ) : (
+            t.form.send
+          )}
         </Button>
 
         <Divider
@@ -237,7 +272,10 @@ const ContactForm = ({ t }: ContactFormProps) => {
             color: "rgba(255,255,255,.75)",
             mb: 3,
             lineHeight: 1.7,
-            fontSize: { xs: "0.95rem", md: "1rem" },
+            fontSize: {
+              xs: "0.95rem",
+              md: "1rem",
+            },
           }}
         >
           {t.form.schedule}
@@ -281,7 +319,11 @@ const ContactForm = ({ t }: ContactFormProps) => {
           horizontal: "center",
         }}
       >
-        <Alert severity="success" variant="filled" sx={{ borderRadius: 3 }}>
+        <Alert
+          severity="success"
+          variant="filled"
+          sx={{ borderRadius: 3 }}
+        >
           {t.form.success}
         </Alert>
       </Snackbar>
@@ -295,7 +337,11 @@ const ContactForm = ({ t }: ContactFormProps) => {
           horizontal: "center",
         }}
       >
-        <Alert severity="error" variant="filled" sx={{ borderRadius: 3 }}>
+        <Alert
+          severity="error"
+          variant="filled"
+          sx={{ borderRadius: 3 }}
+        >
           {t.form.error}
         </Alert>
       </Snackbar>
