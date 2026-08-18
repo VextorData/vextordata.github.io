@@ -4,6 +4,34 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
+  // ============================================================
+  // CORS
+  // ============================================================
+
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://www.vextordata.com"
+  );
+
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "POST, OPTIONS"
+  );
+
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type"
+  );
+
+  // Responder al preflight del navegador
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  // ============================================================
+  // SOLO POST
+  // ============================================================
+
   if (req.method !== "POST") {
     return res.status(405).json({
       error: "Method not allowed",
@@ -13,29 +41,35 @@ export default async function handler(
   try {
     const { name, email, message } = req.body;
 
+    // ============================================================
+    // VALIDACIÓN
+    // ============================================================
+
     if (!name || !email || !message) {
       return res.status(400).json({
         error: "All fields are required",
       });
     }
 
-    /*
-     * ============================================================
-     * 1. EMAIL INTERNO
-     * ============================================================
-     */
+    // ============================================================
+    // 1. EMAIL INTERNO
+    // ============================================================
 
     const internalEmail = await fetch(
       "https://api.resend.com/emails",
       {
         method: "POST",
+
         headers: {
           Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
           "Content-Type": "application/json",
         },
+
         body: JSON.stringify({
           from: "VextorData <contact@vextordata.com>",
+
           to: ["team@vextordata.com"],
+
           reply_to: email,
 
           subject: `Nueva solicitud de contacto — ${name}`,
@@ -86,6 +120,7 @@ export default async function handler(
 
                 <p style="margin: 0 0 16px 0;">
                   <strong>Nombre</strong><br />
+
                   <span style="color: #475569;">
                     ${name}
                   </span>
@@ -155,22 +190,23 @@ export default async function handler(
       );
     }
 
-    /*
-     * ============================================================
-     * 2. AUTORESPUESTA AL CLIENTE
-     * ============================================================
-     */
+    // ============================================================
+    // 2. AUTORESPUESTA AL CLIENTE
+    // ============================================================
 
     const autoReply = await fetch(
       "https://api.resend.com/emails",
       {
         method: "POST",
+
         headers: {
           Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
           "Content-Type": "application/json",
         },
+
         body: JSON.stringify({
           from: "VextorData <contact@vextordata.com>",
+
           to: [email],
 
           subject:
@@ -189,9 +225,7 @@ export default async function handler(
               "
             >
 
-              <!-- ========================================= -->
               <!-- ESPAÑOL -->
-              <!-- ========================================= -->
 
               <h2
                 style="
@@ -243,10 +277,7 @@ export default async function handler(
                 en contacto contigo lo antes posible.
               </p>
 
-
-              <!-- ========================================= -->
               <!-- SEPARADOR -->
-              <!-- ========================================= -->
 
               <div
                 style="
@@ -255,10 +286,7 @@ export default async function handler(
                 "
               ></div>
 
-
-              <!-- ========================================= -->
               <!-- ENGLISH -->
-              <!-- ========================================= -->
 
               <h2
                 style="
@@ -309,10 +337,7 @@ export default async function handler(
                 you as soon as possible.
               </p>
 
-
-              <!-- ========================================= -->
               <!-- FIRMA / IMAGEN -->
-              <!-- ========================================= -->
 
               <div
                 style="
@@ -354,11 +379,9 @@ export default async function handler(
       );
     }
 
-    /*
-     * ============================================================
-     * 3. RESPUESTA API
-     * ============================================================
-     */
+    // ============================================================
+    // 3. RESPUESTA
+    // ============================================================
 
     return res.status(200).json({
       success: true,
