@@ -1,33 +1,9 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-const allowedOrigins = [
-  "https://vextordata.com",
-  "https://www.vextordata.com",
-];
-
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
-  const origin = req.headers.origin;
-
-  // CORS
-  if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type"
-  );
-
-  // Preflight request
-  if (req.method === "OPTIONS") {
-    return res.status(204).end();
-  }
-
-  // Only POST is allowed
   if (req.method !== "POST") {
     return res.status(405).json({
       error: "Method not allowed",
@@ -37,25 +13,17 @@ export default async function handler(
   try {
     const { name, email, message } = req.body;
 
-    // Validate fields
     if (!name || !email || !message) {
       return res.status(400).json({
         error: "All fields are required",
       });
     }
 
-    // Check API key
-    if (!process.env.RESEND_API_KEY) {
-      console.error("RESEND_API_KEY is missing");
-
-      return res.status(500).json({
-        error: "Email service is not configured",
-      });
-    }
-
-    // =====================================================
-    // 1. INTERNAL EMAIL
-    // =====================================================
+    /*
+     * ============================================================
+     * 1. EMAIL INTERNO
+     * ============================================================
+     */
 
     const internalEmail = await fetch(
       "https://api.resend.com/emails",
@@ -69,51 +37,103 @@ export default async function handler(
           from: "VextorData <contact@vextordata.com>",
           to: ["team@vextordata.com"],
           reply_to: email,
-          subject: `New contact from ${name}`,
-          html: `
-            <div style="
-              font-family: Arial, sans-serif;
-              max-width: 650px;
-              margin: 0 auto;
-              color: #1e293b;
-            ">
 
-              <h2 style="color: #2563eb;">
-                New contact from VextorData
+          subject: `Nueva solicitud de contacto — ${name}`,
+
+          html: `
+            <div
+              style="
+                font-family: Arial, Helvetica, sans-serif;
+                max-width: 650px;
+                margin: 0;
+                padding: 30px;
+                color: #1e293b;
+                background-color: #ffffff;
+                text-align: left;
+              "
+            >
+
+              <h2
+                style="
+                  margin: 0 0 8px 0;
+                  color: #2563eb;
+                  font-size: 24px;
+                  line-height: 1.3;
+                "
+              >
+                Nueva solicitud de contacto
               </h2>
 
-              <p>
-                <strong>Name:</strong> ${name}
+              <p
+                style="
+                  margin: 0 0 28px 0;
+                  color: #64748b;
+                  font-size: 15px;
+                  line-height: 1.6;
+                "
+              >
+                Hemos recibido un nuevo mensaje a través del
+                formulario de contacto de VextorData.
               </p>
 
-              <p>
-                <strong>Email:</strong> ${email}
-              </p>
+              <div
+                style="
+                  border-top: 1px solid #e2e8f0;
+                  border-bottom: 1px solid #e2e8f0;
+                  padding: 22px 0;
+                "
+              >
 
-              <p>
-                <strong>Message:</strong>
-              </p>
+                <p style="margin: 0 0 16px 0;">
+                  <strong>Nombre</strong><br />
+                  <span style="color: #475569;">
+                    ${name}
+                  </span>
+                </p>
 
-              <div style="
-                background: #f8fafc;
-                border-left: 4px solid #06b6d4;
-                padding: 15px;
-                margin-top: 10px;
-              ">
-                ${message}
+                <p style="margin: 0 0 16px 0;">
+                  <strong>Email</strong><br />
+
+                  <a
+                    href="mailto:${email}"
+                    style="
+                      color: #2563eb;
+                      text-decoration: none;
+                    "
+                  >
+                    ${email}
+                  </a>
+                </p>
+
+                <p style="margin: 0;">
+                  <strong>Mensaje</strong><br />
+
+                  <span
+                    style="
+                      display: block;
+                      margin-top: 8px;
+                      padding: 16px;
+                      background: #f8fafc;
+                      border-radius: 8px;
+                      color: #334155;
+                      line-height: 1.6;
+                      white-space: pre-line;
+                    "
+                  >
+                    ${message}
+                  </span>
+                </p>
+
               </div>
 
-              <hr style="
-                border: none;
-                border-top: 1px solid #e2e8f0;
-                margin: 30px 0;
-              " />
-
-              <p style="
-                color: #64748b;
-                font-size: 13px;
-              ">
-                Sent from vextordata.com
+              <p
+                style="
+                  margin: 24px 0 0 0;
+                  color: #94a3b8;
+                  font-size: 13px;
+                "
+              >
+                VextorData · Contact Form
               </p>
 
             </div>
@@ -122,27 +142,24 @@ export default async function handler(
       }
     );
 
-    // Get Resend error if sending failed
     if (!internalEmail.ok) {
-      const errorData = await internalEmail
-        .json()
-        .catch(() => null);
+      const errorData = await internalEmail.text();
 
       console.error(
         "Internal email failed:",
         errorData
       );
 
-      return res.status(500).json({
-        error:
-          errorData?.message ||
-          "Failed to send internal email",
-      });
+      throw new Error(
+        "Failed to send internal email"
+      );
     }
 
-    // =====================================================
-    // 2. AUTOMATIC REPLY TO USER
-    // =====================================================
+    /*
+     * ============================================================
+     * 2. AUTORESPUESTA AL CLIENTE
+     * ============================================================
+     */
 
     const autoReply = await fetch(
       "https://api.resend.com/emails",
@@ -155,78 +172,172 @@ export default async function handler(
         body: JSON.stringify({
           from: "VextorData <contact@vextordata.com>",
           to: [email],
+
           subject:
-            "Thank you for contacting VextorData",
+            "Hemos recibido tu mensaje — VextorData",
+
           html: `
-            <div style="
-              font-family: Arial, sans-serif;
-              max-width: 600px;
-              margin: 0 auto;
-              padding: 30px;
-              color: #1e293b;
-            ">
+            <div
+              style="
+                font-family: Arial, Helvetica, sans-serif;
+                max-width: 600px;
+                margin: 0;
+                padding: 32px;
+                color: #1e293b;
+                background-color: #ffffff;
+                text-align: left;
+              "
+            >
 
-              <h2 style="
-                color: #2563eb;
-                margin-bottom: 25px;
-              ">
-                Thank you for contacting VextorData
-              </h2>
+              <!-- ========================================= -->
+              <!-- ESPAÑOL -->
+              <!-- ========================================= -->
 
-              <p>
-                Hi ${name},
-              </p>
-
-              <p>
-                We have received your message and
-                appreciate you reaching out to us.
-              </p>
-
-              <p>
-                Our team will review your request
-                and get back to you as soon as possible.
-              </p>
-
-              <hr style="
-                border: none;
-                border-top: 1px solid #e2e8f0;
-                margin: 30px 0;
-              " />
-
-              <h2 style="
-                color: #2563eb;
-                margin-bottom: 25px;
-              ">
+              <h2
+                style="
+                  margin: 0 0 18px 0;
+                  color: #2563eb;
+                  font-size: 24px;
+                  line-height: 1.3;
+                  text-align: left;
+                "
+              >
                 Gracias por contactar con VextorData
               </h2>
 
-              <p>
+              <p
+                style="
+                  margin: 0 0 16px 0;
+                  font-size: 16px;
+                  line-height: 1.6;
+                  text-align: left;
+                "
+              >
                 Hola ${name},
               </p>
 
-              <p>
-                Hemos recibido tu mensaje y agradecemos
-                que te hayas puesto en contacto con nosotros.
+              <p
+                style="
+                  margin: 0 0 16px 0;
+                  font-size: 15px;
+                  line-height: 1.7;
+                  color: #475569;
+                  text-align: left;
+                "
+              >
+                Hemos recibido correctamente tu mensaje y
+                agradecemos que te hayas puesto en contacto con
+                nosotros.
               </p>
 
-              <p>
-                Nuestro equipo revisará tu solicitud
-                y te responderá lo antes posible.
+              <p
+                style="
+                  margin: 0 0 28px 0;
+                  font-size: 15px;
+                  line-height: 1.7;
+                  color: #475569;
+                  text-align: left;
+                "
+              >
+                Nuestro equipo revisará tu solicitud y se pondrá
+                en contacto contigo lo antes posible.
               </p>
 
-              <p style="margin-top: 30px;">
-                Un saludo,<br />
-                <strong>Equipo VextorData</strong>
+
+              <!-- ========================================= -->
+              <!-- SEPARADOR -->
+              <!-- ========================================= -->
+
+              <div
+                style="
+                  border-top: 1px solid #e2e8f0;
+                  margin: 28px 0;
+                "
+              ></div>
+
+
+              <!-- ========================================= -->
+              <!-- ENGLISH -->
+              <!-- ========================================= -->
+
+              <h2
+                style="
+                  margin: 0 0 18px 0;
+                  color: #2563eb;
+                  font-size: 22px;
+                  line-height: 1.3;
+                  text-align: left;
+                "
+              >
+                Thank you for contacting VextorData
+              </h2>
+
+              <p
+                style="
+                  margin: 0 0 16px 0;
+                  font-size: 16px;
+                  line-height: 1.6;
+                  text-align: left;
+                "
+              >
+                Hi ${name},
               </p>
 
-              <p style="
-                color: #64748b;
-                font-size: 14px;
-                margin-top: 25px;
-              ">
-                contact@vextordata.com<br />
-                vextordata.com
+              <p
+                style="
+                  margin: 0 0 16px 0;
+                  font-size: 15px;
+                  line-height: 1.7;
+                  color: #475569;
+                  text-align: left;
+                "
+              >
+                We have received your message and appreciate you
+                reaching out to us.
               </p>
+
+              <p
+                style="
+                  margin: 0 0 28px 0;
+                  font-size: 15px;
+                  line-height: 1.7;
+                  color: #475569;
+                  text-align: left;
+                "
+              >
+                Our team will review your request and get back to
+                you as soon as possible.
+              </p>
+
+
+              <!-- ========================================= -->
+              <!-- FIRMA / IMAGEN -->
+              <!-- ========================================= -->
+
+              <div
+                style="
+                  border-top: 1px solid #e2e8f0;
+                  padding-top: 24px;
+                  margin-top: 28px;
+                "
+              >
+
+                <img
+                  src="https://vextordata-contact-api.vercel.app/mail.jpg"
+                  alt="VextorData"
+                  width="600"
+                  style="
+                    display: block;
+                    width: 100%;
+                    max-width: 600px;
+                    height: auto;
+                    border: 0;
+                    outline: none;
+                    text-decoration: none;
+                  "
+                />
+
+              </div>
 
             </div>
           `,
@@ -234,12 +345,8 @@ export default async function handler(
       }
     );
 
-    // Auto-reply failing should not fail
-    // the whole contact request
     if (!autoReply.ok) {
-      const errorData = await autoReply
-        .json()
-        .catch(() => null);
+      const errorData = await autoReply.text();
 
       console.error(
         "Auto-reply failed:",
@@ -247,13 +354,14 @@ export default async function handler(
       );
     }
 
-    // =====================================================
-    // SUCCESS
-    // =====================================================
+    /*
+     * ============================================================
+     * 3. RESPUESTA API
+     * ============================================================
+     */
 
     return res.status(200).json({
       success: true,
-      message: "Message sent successfully",
     });
 
   } catch (error) {
