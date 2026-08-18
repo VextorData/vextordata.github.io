@@ -29,7 +29,7 @@ const Contact = ({ t }: ContactProps) => {
           sx={{
             display: "grid",
             gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-            gap: 8,
+            gap: { xs: 5, md: 8 },
             alignItems: "center",
           }}
         >
@@ -38,13 +38,16 @@ const Contact = ({ t }: ContactProps) => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
+            sx={{ width: "100%", maxWidth: "100%" }}
           >
             <Typography
               variant="h2"
               sx={{
                 fontWeight: 900,
                 letterSpacing: "-0.05em",
-                mb: 3,
+                mb: { xs: 2, md: 3 },
+                fontSize: { xs: "2.25rem", md: "3.5rem" },
+                lineHeight: { xs: 1.1, md: 1.05 },
               }}
             >
               {t.contact.title}
@@ -53,16 +56,25 @@ const Contact = ({ t }: ContactProps) => {
             <Typography
               sx={{
                 color: "rgba(255,255,255,.75)",
-                fontSize: 18,
+                fontSize: { xs: 16, md: 18 },
                 lineHeight: 1.7,
-                maxWidth: 500,
-                mb: 5,
+                maxWidth: { xs: "100%", md: 500 },
+                mb: { xs: 3, md: 5 },
               }}
             >
               {t.contact.description}
             </Typography>
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                flexWrap: "wrap",
+                width: "100%",
+                maxWidth: "100%",
+              }}
+            >
               <Box
                 sx={{
                   width: 45,
@@ -72,17 +84,18 @@ const Contact = ({ t }: ContactProps) => {
                   alignItems: "center",
                   justifyContent: "center",
                   background: "rgba(255,255,255,.1)",
+                  flexShrink: 0,
                 }}
               >
                 <IconMail size={24} />
               </Box>
 
-              <Box>
+              <Box sx={{ minWidth: 0, flex: 1 }}>
                 <Typography sx={{ fontSize: 14, color: "rgba(255,255,255,.6)" }}>
                   {t.contact.email}
                 </Typography>
 
-                <Typography sx={{ fontWeight: 700 }}>
+                <Typography sx={{ fontWeight: 700, wordBreak: "break-word" }}>
                   contact@vextordata.com
                 </Typography>
               </Box>
