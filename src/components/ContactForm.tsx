@@ -142,9 +142,12 @@ const ContactForm = ({ t }: ContactFormProps) => {
           background: "rgba(15,23,42,.55)",
           backdropFilter: "blur(20px)",
           borderRadius: 5,
-          p: { xs: 3, md: 4 },
+          p: { xs: 2.5, md: 4 },
           border: "1px solid rgba(255,255,255,.15)",
           boxShadow: "0 25px 80px rgba(0,0,0,.35)",
+          width: "100%",
+          maxWidth: "100%",
+          mx: "auto",
         }}
       >
         <TextField
@@ -234,6 +237,7 @@ const ContactForm = ({ t }: ContactFormProps) => {
             color: "rgba(255,255,255,.75)",
             mb: 3,
             lineHeight: 1.7,
+            fontSize: { xs: "0.95rem", md: "1rem" },
           }}
         >
           {t.form.schedule}
