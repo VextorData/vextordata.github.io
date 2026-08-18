@@ -7,30 +7,24 @@ import { motion } from "framer-motion";
 
 import Container from "./Container";
 import ProjectCard from "./ProjectCard";
+import { translations, type Language } from "../translations";
 
 const MotionBox = motion.create(Box);
 
 const projects = [
   {
     title: "PMS Monitor",
-
-    description:
-      "An intelligent platform that continuously monitors medicinal products, detects changes across EMA PMS data and provides a complete history of your portfolio through automated comparisons and powerful dashboards.",
-
     image:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71",
-
-    tags: [
-      "EMA",
-      "SPOR",
-      "PMS",
-      "Medicinal Products",
-      "Monitoring",
-    ],
+    tags: ["EMA", "SPOR", "PMS", "Medicinal Products", "Monitoring"],
   },
 ];
 
-const Projects = () => {
+interface ProjectsProps {
+  t: (typeof translations)[Language];
+}
+
+const Projects = ({ t }: ProjectsProps) => {
   return (
     <Box
       id="products"
@@ -39,14 +33,10 @@ const Projects = () => {
           xs: 8,
           md: 14,
         },
-
         background:
           "linear-gradient(135deg,#0F172A 0%,#1E3A8A 55%,#2563EB 100%)",
-
         scrollMarginTop: "80px",
-
         position: "relative",
-
         overflow: "hidden",
       }}
     >
@@ -71,45 +61,34 @@ const Projects = () => {
             variant="h2"
             sx={{
               color: "#FFFFFF",
-
               fontWeight: 900,
-
               letterSpacing: "-0.05em",
-
               mb: 2,
             }}
           >
-            Products
+            {t.projects.title}
           </Typography>
 
           <Typography
             sx={{
               color: "rgba(255,255,255,.75)",
-
               maxWidth: 700,
-
               mb: 6,
-
               fontSize: 18,
-
               lineHeight: 1.7,
             }}
           >
-            Explore our growing portfolio of software products designed to
-            automate complex workflows, simplify regulatory processes and help
-            businesses make better use of their data.
+            {t.projects.description}
           </Typography>
         </MotionBox>
 
         <Box
           sx={{
             display: "grid",
-
             gridTemplateColumns: {
               xs: "1fr",
               md: "repeat(3,1fr)",
             },
-
             gap: 4,
           }}
         >
@@ -117,6 +96,10 @@ const Projects = () => {
             <ProjectCard
               key={project.title}
               {...project}
+              description={t.projects.featureDescription}
+              comingSoonTitle={t.projects.comingSoonTitle}
+              comingSoonDescription={t.projects.comingSoonDescription}
+              learnMore={t.projects.learnMore}
             />
           ))}
         </Box>

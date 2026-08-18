@@ -4,9 +4,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import {
-  ConstructionRounded,
-} from "@mui/icons-material";
+import { ConstructionRounded } from "@mui/icons-material";
 
 import { motion } from "framer-motion";
 
@@ -17,12 +15,18 @@ interface Props {
   description: string;
   image: string;
   tags: string[];
+  comingSoonTitle: string;
+  comingSoonDescription: string;
+  learnMore: string;
 }
 
 const ProjectCard = ({
   title,
   description,
   tags,
+  comingSoonTitle,
+  comingSoonDescription,
+  learnMore,
 }: Props) => {
   return (
     <MotionBox
@@ -51,73 +55,45 @@ const ProjectCard = ({
         boxShadow: "0 20px 50px rgba(0,0,0,.18)",
         cursor: "pointer",
         transition: "all .3s ease",
-
         "&:hover": {
           boxShadow: "0 30px 80px rgba(37,99,235,.35)",
         },
       }}
     >
-      {/* HEADER */}
-
       <Box
         sx={{
           height: {
             xs: 200,
             md: 250,
           },
-
           background:
             "linear-gradient(135deg,#0F172A 0%,#1E3A8A 55%,#2563EB 100%)",
-
           display: "flex",
-
           flexDirection: "column",
-
           justifyContent: "center",
-
           alignItems: "center",
-
           textAlign: "center",
-
           px: 3,
-
           position: "relative",
-
           overflow: "hidden",
-
           "&::before": {
             content: '""',
-
             position: "absolute",
-
             width: 350,
-
             height: 350,
-
             borderRadius: "50%",
-
             background: "rgba(255,255,255,.05)",
-
             top: -150,
-
             right: -120,
           },
-
           "&::after": {
             content: '""',
-
             position: "absolute",
-
             width: 250,
-
             height: 250,
-
             borderRadius: "50%",
-
             background: "rgba(255,255,255,.04)",
-
             bottom: -120,
-
             left: -100,
           },
         }}
@@ -139,7 +115,7 @@ const ProjectCard = ({
             zIndex: 1,
           }}
         >
-          Coming Soon
+          {comingSoonTitle}
         </Typography>
 
         <Typography
@@ -151,11 +127,9 @@ const ProjectCard = ({
             maxWidth: 260,
           }}
         >
-          This product is currently under development.
+          {comingSoonDescription}
         </Typography>
       </Box>
-
-      {/* CONTENT */}
 
       <Box
         sx={{
@@ -183,8 +157,6 @@ const ProjectCard = ({
         >
           {description}
         </Typography>
-
-        {/* TAGS */}
 
         <Box
           sx={{
@@ -215,7 +187,7 @@ const ProjectCard = ({
             fontSize: 15,
           }}
         >
-          Learn more →
+          {learnMore}
         </Typography>
       </Box>
     </MotionBox>

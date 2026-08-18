@@ -17,68 +17,58 @@ import {
 import { motion } from "framer-motion";
 
 import Container from "./Container";
+import { translations, type Language } from "../translations";
 
 const MotionBox = motion.create(Box);
 
 const technologies = [
   {
+    key: "python",
     name: "Python",
-    description:
-      "Backend development, automation and data processing.",
     icon: IconBrandPython,
   },
-
   {
+    key: "react",
     name: "React",
-    description:
-      "Modern web applications with intuitive user experiences.",
     icon: IconBrandReact,
   },
-
   {
+    key: "typescript",
     name: "TypeScript",
-    description:
-      "Reliable, maintainable and scalable applications.",
     icon: IconBrandTypescript,
   },
-
   {
+    key: "fastapi",
     name: "FastAPI",
-    description:
-      "High-performance APIs and backend services.",
     icon: IconApi,
   },
-
   {
+    key: "cloud",
     name: "Cloud",
-    description:
-      "Cloud-native architectures built to scale.",
     icon: IconCloud,
   },
-
   {
+    key: "databases",
     name: "Databases",
-    description:
-      "Structured and unstructured data management.",
     icon: IconDatabase,
   },
-
   {
+    key: "docker",
     name: "Docker",
-    description:
-      "Portable and consistent deployment environments.",
     icon: IconBrandDocker,
   },
-
   {
+    key: "dataEngineering",
     name: "Data Engineering",
-    description:
-      "ETL pipelines, integrations and data automation.",
     icon: IconChartBar,
   },
 ];
 
-const Technology = () => {
+interface TechnologyProps {
+  t: (typeof translations)[Language];
+}
+
+const Technology = ({ t }: TechnologyProps) => {
   return (
     <Box
       id="technology"
@@ -93,20 +83,10 @@ const Technology = () => {
     >
       <Container>
         <MotionBox
-          initial={{
-            opacity: 0,
-            y: 40,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-          }}
-          transition={{
-            duration: 0.7,
-          }}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
         >
           <Typography
             variant="h2"
@@ -116,7 +96,7 @@ const Technology = () => {
               mb: 2,
             }}
           >
-            Our Technology
+            {t.technology.title}
           </Typography>
 
           <Typography
@@ -128,39 +108,19 @@ const Technology = () => {
               mb: 6,
             }}
           >
-            We combine proven technologies to build{" "}
-            <Box
-              component="span"
-              sx={{
-                color: "#2563EB",
-                fontWeight: 700,
-              }}
-            >
-              secure
+            {t.technology.description}{" "}
+            <Box component="span" sx={{ color: "#2563EB", fontWeight: 700 }}>
+              {t.technology.secure}
             </Box>
             ,{" "}
-            <Box
-              component="span"
-              sx={{
-                color: "#2563EB",
-                fontWeight: 700,
-              }}
-            >
-              scalable
+            <Box component="span" sx={{ color: "#2563EB", fontWeight: 700 }}>
+              {t.technology.scalable}
             </Box>{" "}
-            and{" "}
-            <Box
-              component="span"
-              sx={{
-                color: "#2563EB",
-                fontWeight: 700,
-              }}
-            >
-              maintainable
-            </Box>{" "}
-            software. Our technology stack is carefully selected to automate
-            processes, integrate complex systems and deliver reliable solutions
-            that help businesses grow.
+            {t.technology.and}{" "}
+            <Box component="span" sx={{ color: "#2563EB", fontWeight: 700 }}>
+              {t.technology.maintainable}
+            </Box>
+            {t.technology.descriptionSuffix}
           </Typography>
 
           <Box
@@ -177,12 +137,8 @@ const Technology = () => {
             {technologies.map((tech) => (
               <MotionBox
                 key={tech.name}
-                whileHover={{
-                  y: -8,
-                }}
-                transition={{
-                  duration: 0.25,
-                }}
+                whileHover={{ y: -8 }}
+                transition={{ duration: 0.25 }}
                 sx={{
                   background: "#FFFFFF",
                   borderRadius: 4,
@@ -190,19 +146,13 @@ const Technology = () => {
                   boxShadow: "0 15px 40px rgba(15,23,42,.06)",
                   border: "1px solid rgba(15,23,42,.06)",
                   transition: "all .3s ease",
-
                   "&:hover": {
                     boxShadow: "0 20px 50px rgba(37,99,235,.12)",
                     borderColor: "rgba(37,99,235,.18)",
                   },
                 }}
               >
-                <Box
-                  sx={{
-                    color: "#2563EB",
-                    mb: 2,
-                  }}
-                >
+                <Box sx={{ color: "#2563EB", mb: 2 }}>
                   <tech.icon size={38} />
                 </Box>
 
@@ -218,12 +168,12 @@ const Technology = () => {
 
                 <Typography
                   variant="body2"
-                  color="text.secondary"
                   sx={{
+                    color: "rgba(15,23,42,.7)",
                     lineHeight: 1.7,
                   }}
                 >
-                  {tech.description}
+                  {t.technology.cards[tech.key as keyof typeof t.technology.cards]}
                 </Typography>
               </MotionBox>
             ))}

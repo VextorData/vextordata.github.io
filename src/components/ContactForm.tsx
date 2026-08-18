@@ -11,10 +11,14 @@ import {
 } from "@mui/material";
 
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import { translations, type Language } from "../translations";
 
-const ContactForm = () => {
+interface ContactFormProps {
+  t: (typeof translations)[Language];
+}
+
+const ContactForm = ({ t }: ContactFormProps) => {
   const [loading, setLoading] = useState(false);
-
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
 
@@ -26,59 +30,47 @@ const ContactForm = () => {
 
   const inputStyles = {
     mb: 2,
-
     "& .MuiOutlinedInput-root": {
       borderRadius: 3,
       background: "rgba(255,255,255,.10)",
       backdropFilter: "blur(10px)",
       transition: "all .25s ease",
-
       "& fieldset": {
         borderColor: "rgba(255,255,255,.18)",
       },
-
       "&:hover": {
         background: "rgba(255,255,255,.13)",
       },
-
       "&:hover fieldset": {
         borderColor: "#06B6D4",
       },
-
       "&.Mui-focused": {
         background: "rgba(255,255,255,.15)",
       },
-
       "&.Mui-focused fieldset": {
         borderColor: "#06B6D4",
         borderWidth: 2,
       },
-
       "& input": {
         color: "#FFFFFF",
       },
-
       "& textarea": {
         color: "#FFFFFF",
       },
     },
-
     "& .MuiInputLabel-root": {
       color: "rgba(255,255,255,.75)",
     },
-
     "& .MuiInputLabel-root.Mui-focused": {
       color: "#06B6D4",
       fontWeight: 600,
     },
-
     "& .MuiInputLabel-root.MuiInputLabel-shrink": {
       color: "#FFFFFF",
       background: "rgba(15,23,42,.95)",
       padding: "0 8px",
       borderRadius: "8px",
     },
-
     "& .MuiOutlinedInput-input": {
       color: "#FFFFFF",
       caretColor: "#06B6D4",
@@ -99,11 +91,7 @@ const ContactForm = () => {
   ) => {
     e.preventDefault();
 
-    if (
-      !form.Name.trim() ||
-      !form.Email.trim() ||
-      !form.Message.trim()
-    ) {
+    if (!form.Name.trim() || !form.Email.trim() || !form.Message.trim()) {
       setError(true);
       return;
     }
@@ -133,7 +121,6 @@ const ContactForm = () => {
       }
 
       setSuccess(true);
-
       setForm({
         Name: "",
         Email: "",
@@ -164,7 +151,7 @@ const ContactForm = () => {
           fullWidth
           required
           name="Name"
-          label="Name"
+          label={t.form.name}
           value={form.Name}
           onChange={handleChange}
           variant="outlined"
@@ -176,7 +163,7 @@ const ContactForm = () => {
           required
           name="Email"
           type="email"
-          label="Email"
+          label={t.form.email}
           value={form.Email}
           onChange={handleChange}
           variant="outlined"
@@ -187,7 +174,7 @@ const ContactForm = () => {
           fullWidth
           required
           name="Message"
-          label="Message"
+          label={t.form.message}
           multiline
           rows={5}
           value={form.Message}
@@ -206,98 +193,81 @@ const ContactForm = () => {
             borderRadius: "999px",
             py: 1.5,
             mt: 1,
-            background:
-              "linear-gradient(135deg,#2563EB,#06B6D4)",
+            background: "linear-gradient(135deg,#2563EB,#06B6D4)",
             fontWeight: 700,
-            boxShadow:
-              "0 10px 30px rgba(37,99,235,.35)",
-
+            boxShadow: "0 10px 30px rgba(37,99,235,.35)",
             "&:hover": {
               transform: "translateY(-2px)",
-              boxShadow:
-                "0 15px 40px rgba(37,99,235,.45)",
+              boxShadow: "0 15px 40px rgba(37,99,235,.45)",
             },
-
             transition: "all .25s ease",
           }}
         >
-          {loading ? (
-            <CircularProgress
-              size={24}
-              sx={{ color: "white" }}
-            />
-          ) : (
-            "Send Message"
-          )}
+          {loading ? <CircularProgress size={24} sx={{ color: "white" }} /> : t.form.send}
         </Button>
+
         <Divider
-  sx={{
-    my: 4,
-    borderColor: "rgba(255,255,255,.15)",
-    color: "rgba(255,255,255,.6)",
-  }}
->
-  OR
-</Divider>
+          sx={{
+            my: 4,
+            borderColor: "rgba(255,255,255,.15)",
+            color: "rgba(255,255,255,.6)",
+          }}
+        >
+          {t.form.or}
+        </Divider>
 
-<Typography
-  variant="h6"
-  align="center"
-  sx={{
-    color: "#FFFFFF",
-    fontWeight: 700,
-    mb: 1,
-  }}
->
-  Prefer to talk directly?
-</Typography>
+        <Typography
+          variant="h6"
+          align="center"
+          sx={{
+            color: "#FFFFFF",
+            fontWeight: 700,
+            mb: 1,
+          }}
+        >
+          {t.form.prefer}
+        </Typography>
 
-<Typography
-  align="center"
-  sx={{
-    color: "rgba(255,255,255,.75)",
-    mb: 3,
-    lineHeight: 1.7,
-  }}
->
-  Schedule a free 30-minute consultation with one of our specialists.
-</Typography>
+        <Typography
+          align="center"
+          sx={{
+            color: "rgba(255,255,255,.75)",
+            mb: 3,
+            lineHeight: 1.7,
+          }}
+        >
+          {t.form.schedule}
+        </Typography>
 
-<Button
-  fullWidth
-  size="large"
-  startIcon={<CalendarMonthIcon />}
-  onClick={() =>
-    window.open(
-      "https://calendly.com/TU-USUARIO/FREE-CONSULTATION",
-      "_blank",
-      "noopener,noreferrer"
-    )
-  }
-  sx={{
-    borderRadius: "999px",
-    py: 1.5,
-
-    border: "2px solid #06B6D4",
-
-    color: "#06B6D4",
-
-    fontWeight: 700,
-
-    transition: "all .25s ease",
-
-    "&:hover": {
-      background: "rgba(6,182,212,.08)",
-      transform: "translateY(-2px)",
-      borderColor: "#22D3EE",
-    },
-  }}
->
-  Book a Free Consultation
-</Button>
+        <Button
+          fullWidth
+          size="large"
+          startIcon={<CalendarMonthIcon />}
+          onClick={() =>
+            window.open(
+              "https://calendly.com/tu-usuario/reunion-vextordata",
+              "_blank",
+              "noopener,noreferrer"
+            )
+          }
+          sx={{
+            borderRadius: "999px",
+            py: 1.5,
+            border: "2px solid #06B6D4",
+            color: "#06B6D4",
+            fontWeight: 700,
+            transition: "all .25s ease",
+            "&:hover": {
+              background: "rgba(6,182,212,.08)",
+              transform: "translateY(-2px)",
+              borderColor: "#22D3EE",
+            },
+          }}
+        >
+          {t.form.book}
+        </Button>
       </Box>
 
-          
       <Snackbar
         open={success}
         autoHideDuration={5000}
@@ -307,13 +277,8 @@ const ContactForm = () => {
           horizontal: "center",
         }}
       >
-        <Alert
-          severity="success"
-          variant="filled"
-          sx={{ borderRadius: 3 }}
-        >
-          Your message has been sent successfully. We'll get
-          back to you as soon as possible.
+        <Alert severity="success" variant="filled" sx={{ borderRadius: 3 }}>
+          {t.form.success}
         </Alert>
       </Snackbar>
 
@@ -326,12 +291,8 @@ const ContactForm = () => {
           horizontal: "center",
         }}
       >
-        <Alert
-          severity="error"
-          variant="filled"
-          sx={{ borderRadius: 3 }}
-        >
-          Unable to send your message. Please try again.
+        <Alert severity="error" variant="filled" sx={{ borderRadius: 3 }}>
+          {t.form.error}
         </Alert>
       </Snackbar>
     </>
