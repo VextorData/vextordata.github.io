@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Box,
@@ -27,6 +27,22 @@ const ContactForm = ({ t }: ContactFormProps) => {
     email: "",
     message: "",
   });
+
+  // Detectar si FormSubmit ha enviado correctamente el formulario
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("contact") === "success") {
+      setSuccess(true);
+
+      // Limpiar ?contact=success de la URL
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+      );
+    }
+  }, []);
 
   const inputStyles = {
     mb: 2,
@@ -140,28 +156,28 @@ const ContactForm = ({ t }: ContactFormProps) => {
           value="table"
         />
 
-       <input
-        type="hidden"
-        name="_autoresponse"
-        value={`Thank you for contacting VextorData.
-        
-          We have received your message and appreciate you reaching out to us.
-          
-          Our team will review your request and get back to you as soon as possible.
-          
-          Best regards,
-          VextorData Team
-          
-          ------------------------------
-          
-          Gracias por contactar con VextorData.
-          
-          Hemos recibido tu mensaje y agradecemos que te hayas puesto en contacto con nosotros.
-          
-          Nuestro equipo revisará tu solicitud y te responderá lo antes posible.
-          
-          Un saludo,
-          Equipo VextorData`}
+        <input
+          type="hidden"
+          name="_autoresponse"
+          value={`Thank you for contacting VextorData.
+
+We have received your message and appreciate you reaching out to us.
+
+Our team will review your request and get back to you as soon as possible.
+
+Best regards,
+VextorData Team
+
+------------------------------
+
+Gracias por contactar con VextorData.
+
+Hemos recibido tu mensaje y agradecemos que te hayas puesto en contacto con nosotros.
+
+Nuestro equipo revisará tu solicitud y te responderá lo antes posible.
+
+Un saludo,
+Equipo VextorData`}
         />
 
         <input
@@ -169,7 +185,7 @@ const ContactForm = ({ t }: ContactFormProps) => {
           name="_next"
           value="https://vextordata.com/?contact=success"
         />
-        
+
         <TextField
           fullWidth
           required
@@ -308,6 +324,26 @@ const ContactForm = ({ t }: ContactFormProps) => {
         </Button>
       </Box>
 
+      {/* Success Snackbar */}
+      <Snackbar
+        open={success}
+        autoHideDuration={5000}
+        onClose={() => setSuccess(false)}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+      >
+        <Alert
+          severity="success"
+          variant="filled"
+          sx={{ borderRadius: 3 }}
+        >
+          {t.form.success}
+        </Alert>
+      </Snackbar>
+
+      {/* Error Snackbar */}
       <Snackbar
         open={error}
         autoHideDuration={5000}
