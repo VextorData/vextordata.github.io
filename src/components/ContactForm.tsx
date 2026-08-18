@@ -245,7 +245,7 @@ const ContactForm = ({ t }: ContactFormProps) => {
           startIcon={<CalendarMonthIcon />}
           onClick={() =>
             window.open(
-              "https://calendly.com/tu-usuario/reunion-vextordata",
+              "https://calendly.com/contact-vextordata/30min",
               "_blank",
               "noopener,noreferrer"
             )
