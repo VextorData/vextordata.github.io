@@ -102,6 +102,7 @@ const ContactForm = ({ t }: ContactFormProps) => {
   ) => {
     e.preventDefault();
 
+    // Validación
     if (
       !form.name.trim() ||
       !form.email.trim() ||
@@ -126,12 +127,22 @@ const ContactForm = ({ t }: ContactFormProps) => {
         }
       );
 
+      // Intentamos leer la respuesta de la API
+      const data = await response.json();
+
+      console.log("API RESPONSE:", data);
+
+      // Si la API devuelve error
       if (!response.ok) {
-        throw new Error("Failed to send message");
+        throw new Error(
+          data?.error || "Failed to send message"
+        );
       }
 
+      // Envío correcto
       setSuccess(true);
 
+      // Limpiar formulario
       setForm({
         name: "",
         email: "",
