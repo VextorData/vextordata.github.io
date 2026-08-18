@@ -19,7 +19,6 @@ interface ContactFormProps {
 
 const ContactForm = ({ t }: ContactFormProps) => {
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
 
   const [form, setForm] = useState({
@@ -35,42 +34,53 @@ const ContactForm = ({ t }: ContactFormProps) => {
       background: "rgba(255,255,255,.10)",
       backdropFilter: "blur(10px)",
       transition: "all .25s ease",
+
       "& fieldset": {
         borderColor: "rgba(255,255,255,.18)",
       },
+
       "&:hover": {
         background: "rgba(255,255,255,.13)",
       },
+
       "&:hover fieldset": {
         borderColor: "#06B6D4",
       },
+
       "&.Mui-focused": {
         background: "rgba(255,255,255,.15)",
       },
+
       "&.Mui-focused fieldset": {
         borderColor: "#06B6D4",
         borderWidth: 2,
       },
+
       "& input": {
         color: "#FFFFFF",
       },
+
       "& textarea": {
         color: "#FFFFFF",
       },
     },
+
     "& .MuiInputLabel-root": {
       color: "rgba(255,255,255,.75)",
     },
+
     "& .MuiInputLabel-root.Mui-focused": {
       color: "#06B6D4",
       fontWeight: 600,
     },
+
     "& .MuiInputLabel-root.MuiInputLabel-shrink": {
       color: "#FFFFFF",
       background: "rgba(15,23,42,.95)",
       padding: "0 8px",
       borderRadius: "8px",
     },
+
     "& .MuiOutlinedInput-input": {
       color: "#FFFFFF",
       caretColor: "#06B6D4",
@@ -86,82 +96,28 @@ const ContactForm = ({ t }: ContactFormProps) => {
     });
   };
 
-  const handleSubmit = async (
+  const handleSubmit = (
     e: React.FormEvent<HTMLFormElement>
   ) => {
-    e.preventDefault();
-
     if (
       !form.name.trim() ||
       !form.email.trim() ||
       !form.message.trim()
     ) {
+      e.preventDefault();
       setError(true);
       return;
     }
 
     setLoading(true);
-
-    try {
-      const formData = new FormData();
-
-      formData.append("name", form.name);
-      formData.append("email", form.email);
-      formData.append("message", form.message);
-
-      formData.append(
-        "_subject",
-        "New contact from VextorData"
-      );
-
-      formData.append(
-        "_autoresponse",
-        `Thank you for contacting VextorData.
-
-We have received your message and appreciate you reaching out to us.
-
-Our team will review your request and get back to you as soon as possible.
-
-Best regards,
-VextorData`
-      );
-
-      formData.append("_captcha", "false");
-
-      const response = await fetch(
-        "https://formsubmit.co/ajax/team@vextordata.com",
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-          },
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to send message");
-      }
-
-      setSuccess(true);
-
-      setForm({
-        name: "",
-        email: "",
-        message: "",
-      });
-    } catch (error) {
-      console.error(error);
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
     <>
       <Box
         component="form"
+        action="https://formsubmit.co/team@vextordata.com"
+        method="POST"
         onSubmit={handleSubmit}
         sx={{
           background: "rgba(15,23,42,.55)",
@@ -175,6 +131,44 @@ VextorData`
           mx: "auto",
         }}
       >
+        {/* FormSubmit configuration */}
+
+        <input
+          type="hidden"
+          name="_subject"
+          value="New contact from VextorData"
+        />
+
+        <input
+          type="hidden"
+          name="_autoresponse"
+          value={`Thank you for contacting VextorData.
+        
+        We have received your message and appreciate you reaching out to us.
+        
+        Our team will review your request and get back to you as soon as possible.
+        
+        Best regards,
+        VextorData Team
+        
+        ────────────────────────
+        
+        Gracias por contactar con VextorData.
+        
+        Hemos recibido tu mensaje y agradecemos que te hayas puesto en contacto con nosotros.
+        
+        Nuestro equipo revisará tu solicitud y te responderá lo antes posible.
+        
+        Un saludo,
+        Equipo VextorData`}
+        />
+
+        <input
+          type="hidden"
+          name="_next"
+          value="https://vextordata.com/contact?sent=true"
+        />
+
         <TextField
           fullWidth
           required
@@ -226,11 +220,13 @@ VextorData`
             fontWeight: 700,
             boxShadow:
               "0 10px 30px rgba(37,99,235,.35)",
+
             "&:hover": {
               transform: "translateY(-2px)",
               boxShadow:
                 "0 15px 40px rgba(37,99,235,.45)",
             },
+
             transition: "all .25s ease",
           }}
         >
@@ -299,6 +295,7 @@ VextorData`
             color: "#06B6D4",
             fontWeight: 700,
             transition: "all .25s ease",
+
             "&:hover": {
               background: "rgba(6,182,212,.08)",
               transform: "translateY(-2px)",
@@ -309,24 +306,6 @@ VextorData`
           {t.form.book}
         </Button>
       </Box>
-
-      <Snackbar
-        open={success}
-        autoHideDuration={5000}
-        onClose={() => setSuccess(false)}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
-        }}
-      >
-        <Alert
-          severity="success"
-          variant="filled"
-          sx={{ borderRadius: 3 }}
-        >
-          {t.form.success}
-        </Alert>
-      </Snackbar>
 
       <Snackbar
         open={error}
